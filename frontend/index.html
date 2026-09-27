@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>User & Books Management</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #eef2ff, #f5f3ff);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 30px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1050px;
+            min-height: 650px;
+            background: white;
+            border-radius: 22px;
+            overflow: hidden;
+            display: grid;
+            grid-template-columns: 45% 55%;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.12);
+        }
+
+        /* LEFT SIDE */
+
+        .left-panel {
+            background: linear-gradient(145deg, #2563eb, #4f46e5, #7c3aed);
+            color: white;
+            padding: 55px 45px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .logo {
+            font-size: 38px;
+            margin-bottom: 20px;
+        }
+
+        .left-panel h1 {
+            font-size: 38px;
+            line-height: 1.2;
+            margin-bottom: 20px;
+        }
+
+        .left-panel p {
+            font-size: 17px;
+            line-height: 1.7;
+            opacity: 0.95;
+            margin-bottom: 30px;
+        }
+
+        .features {
+            list-style: none;
+        }
+
+        .features li {
+            margin: 16px 0;
+            font-size: 16px;
+        }
+
+        /* RIGHT SIDE */
+
+        .right-panel {
+            padding: 55px 60px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .right-panel h2 {
+            font-size: 30px;
+            color: #1e293b;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            color: #64748b;
+            margin-bottom: 30px;
+        }
+
+        /* TABS */
+
+        .tabs {
+            display: flex;
+            margin-bottom: 30px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .tab {
+            width: 50%;
+            padding: 13px;
+            border: none;
+            background: transparent;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            color: #64748b;
+        }
+
+        .tab.active {
+            color: #2563eb;
+            border-bottom: 3px solid #2563eb;
+        }
+
+        /* FORM */
+
+        .form {
+            display: none;
+        }
+
+        .form.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #334155;
+            font-weight: 600;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 14px 15px;
+            border: 1px solid #cbd5e1;
+            border-radius: 10px;
+            font-size: 15px;
+            outline: none;
+            transition: 0.2s;
+        }
+
+        input:focus,
+        select:focus {
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+
+        /* ROLE */
+
+        .role-box {
+            margin-bottom: 20px;
+        }
+
+        .role-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .role-option {
+            position: relative;
+        }
+
+        .role-option input {
+            position: absolute;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .role-label {
+            display: block;
+            text-align: center;
+            padding: 13px;
+            border: 1px solid #cbd5e1;
+            border-radius: 10px;
+            cursor: pointer;
+            color: #475569;
+            background: #f8fafc;
+            transition: 0.2s;
+        }
+
+        .role-option input:checked + .role-label {
+            border-color: #4f46e5;
+            background: #eef2ff;
+            color: #4338ca;
+            font-weight: bold;
+        }
+
+        /* BUTTON */
+
+        button.submit-btn {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            background: linear-gradient(90deg, #2563eb, #4f46e5);
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        button.submit-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 8px 20px rgba(79, 70, 229, 0.25);
+        }
+
+        .message {
+            margin-top: 18px;
+            padding: 12px;
+            border-radius: 8px;
+            display: none;
+            font-size: 14px;
+        }
+
+        .message.success {
+            display: block;
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .message.error {
+            display: block;
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .security-note {
+            margin-top: 20px;
+            text-align: center;
+            color: #64748b;
+            font-size: 13px;
+        }
+
+        @media (max-width: 850px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+
+            .left-panel {
+                display: none;
+            }
+
+            .right-panel {
+                padding: 40px 30px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <!-- LEFT PANEL -->
+
+    <div class="left-panel">
+
+        <div class="logo">📚</div>
+
+        <h1>User & Books Management</h1>
+
+        <p>
+            A full-stack application for secure user authentication
+            and personal book management.
+        </p>
+
+        <ul class="features">
+            <li>🔐 JWT Authentication</li>
+            <li>👤 User & Admin Roles</li>
+            <li>📚 Book Management</li>
+            <li>🗄️ MySQL Database</li>
+            <li>🛡️ Role-Based Access Control</li>
+        </ul>
+
+    </div>
+
+    <!-- RIGHT PANEL -->
+
+    <div class="right-panel">
+
+        <h2>Welcome Back</h2>
+
+        <p class="subtitle">
+            Sign in to access your account
+        </p>
+
+        <!-- TABS -->
+
+        <div class="tabs">
+
+            <button
+                class="tab active"
+                onclick="showForm('login')">
+                Sign In
+            </button>
+
+            <button
+                class="tab"
+                onclick="showForm('register')">
+                Create Account
+            </button>
+
+        </div>
+
+        <!-- LOGIN FORM -->
+
+        <form id="loginForm" class="form active">
+
+            <div class="form-group">
+
+                <label for="loginEmail">
+                    Email
+                </label>
+
+                <input
+                    type="email"
+                    id="loginEmail"
+                    placeholder="Enter your email"
+                    required>
+
+            </div>
+
+            <div class="form-group">
+
+                <label for="loginPassword">
+                    Password
+                </label>
+
+                <input
+                    type="password"
+                    id="loginPassword"
+                    placeholder="Enter your password"
+                    required>
+
+            </div>
+
+            <!-- LOGIN ROLE -->
+
+            <div class="role-box">
+
+                <label>
+                    Login As
+                </label>
+
+                <div class="role-options">
+
+                    <div class="role-option">
+
+                        <input
+                            type="radio"
+                            name="loginRole"
+                            id="userRole"
+                            value="USER"
+                            checked>
+
+                        <label
+                            for="userRole"
+                            class="role-label">
+
+                            👤 User
+
+                        </label>
+
+                    </div>
+
+                    <div class="role-option">
+
+                        <input
+                            type="radio"
+                            name="loginRole"
+                            id="adminRole"
+                            value="ADMIN">
+
+                        <label
+                            for="adminRole"
+                            class="role-label">
+
+                            👑 Admin
+
+                        </label>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <button
+                type="submit"
+                class="submit-btn">
+
+                Sign In
+
+            </button>
+
+        </form>
+
+        <!-- REGISTER FORM -->
+
+        <form id="registerForm" class="form">
+
+            <div class="form-group">
+
+                <label for="registerEmail">
+                    Email
+                </label>
+
+                <input
+                    type="email"
+                    id="registerEmail"
+                    placeholder="Enter your email"
+                    required>
+
+            </div>
+
+            <div class="form-group">
+
+                <label for="registerPassword">
+                    Password
+                </label>
+
+                <input
+                    type="password"
+                    id="registerPassword"
+                    placeholder="Minimum 8 characters"
+                    minlength="8"
+                    required>
+
+            </div>
+
+            <button
+                type="submit"
+                class="submit-btn">
+
+                Create Account
+
+            </button>
+
+        </form>
+
+        <div
+            id="message"
+            class="message">
+        </div>
+
+        <div class="security-note">
+            🔒 Secure authentication powered by JWT & bcrypt
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+    const API_URL = "http://localhost:3000";
+
+    /* SWITCH LOGIN / REGISTER */
+
+    function showForm(type) {
+
+        const loginForm =
+            document.getElementById("loginForm");
+
+        const registerForm =
+            document.getElementById("registerForm");
+
+        const tabs =
+            document.querySelectorAll(".tab");
+
+        const subtitle =
+            document.querySelector(".subtitle");
+
+        if (type === "login") {
+
+            loginForm.classList.add("active");
+            registerForm.classList.remove("active");
+
+            tabs[0].classList.add("active");
+            tabs[1].classList.remove("active");
+
+            subtitle.textContent =
+                "Sign in to access your account";
+
+        } else {
+
+            loginForm.classList.remove("active");
+            registerForm.classList.add("active");
+
+            tabs[0].classList.remove("active");
+            tabs[1].classList.add("active");
+
+            subtitle.textContent =
+                "Create a new account";
+
+        }
+
+        clearMessage();
+    }
+
+    /* MESSAGE */
+
+    function showMessage(message, type) {
+
+        const messageBox =
+            document.getElementById("message");
+
+        messageBox.textContent = message;
+
+        messageBox.className =
+            "message " + type;
+
+    }
+
+    function clearMessage() {
+
+        const messageBox =
+            document.getElementById("message");
+
+        messageBox.textContent = "";
+
+        messageBox.className = "message";
+
+    }
+
+    /* LOGIN */
+
+    document
+        .getElementById("loginForm")
+        .addEventListener("submit", async function(event) {
+
+            event.preventDefault();
+
+            const email =
+                document.getElementById("loginEmail").value;
+
+            const password =
+                document.getElementById("loginPassword").value;
+
+            const selectedRole =
+                document.querySelector(
+                    'input[name="loginRole"]:checked'
+                ).value;
+
+            try {
+
+                const response = await fetch(
+                    `${API_URL}/api/login`,
+                    {
+                        method: "POST",
+
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+
+                        body: JSON.stringify({
+                            email: email,
+                            password: password
+                        })
+                    }
+                );
+
+                const data = await response.json();
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        data.message || "Login failed"
+                    );
+
+                }
+
+                /*
+                 * IMPORTANT:
+                 * Role comes from the backend.
+                 * We only compare the selected role
+                 * with the authenticated user's role.
+                 */
+
+                let tokenPayload;
+
+                try {
+
+                    const tokenParts =
+                        data.accessToken.split(".");
+
+                    tokenPayload =
+                        JSON.parse(
+                            atob(tokenParts[1])
+                        );
+
+                } catch (error) {
+
+                    throw new Error(
+                        "Invalid access token"
+                    );
+
+                }
+
+                const actualRole =
+                    tokenPayload.role;
+
+                if (selectedRole !== actualRole) {
+
+                    throw new Error(
+                        `This account is registered as ${actualRole}. Please select ${actualRole}.`
+                    );
+
+                }
+
+                localStorage.setItem(
+                    "accessToken",
+                    data.accessToken
+                );
+
+                localStorage.setItem(
+                    "refreshToken",
+                    data.refreshToken
+                );
+
+                localStorage.setItem(
+                    "userRole",
+                    actualRole
+                );
+
+                showMessage(
+                    `Login successful. Role: ${actualRole}`,
+                    "success"
+                );
+
+                setTimeout(() => {
+
+                    if (actualRole === "ADMIN") {
+
+                        window.location.href =
+                            "admin.html";
+
+                    } else {
+
+                        window.location.href =
+                            "dashboard.html";
+
+                    }
+
+                }, 700);
+
+            } catch (error) {
+
+                showMessage(
+                    error.message,
+                    "error"
+                );
+
+            }
+
+        });
+
+    /* REGISTER */
+
+    document
+        .getElementById("registerForm")
+        .addEventListener("submit", async function(event) {
+
+            event.preventDefault();
+
+            const email =
+                document.getElementById("registerEmail").value;
+
+            const password =
+                document.getElementById("registerPassword").value;
+
+            try {
+
+                const response = await fetch(
+                    `${API_URL}/api/register`,
+                    {
+                        method: "POST",
+
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+
+                        body: JSON.stringify({
+                            email: email,
+                            password: password
+                        })
+                    }
+                );
+
+                const data = await response.json();
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        data.message || "Registration failed"
+                    );
+
+                }
+
+                showMessage(
+                    "Registration successful. Please sign in.",
+                    "success"
+                );
+
+                document.getElementById(
+                    "registerForm"
+                ).reset();
+
+                setTimeout(() => {
+
+                    showForm("login");
+
+                    document.getElementById(
+                        "loginEmail"
+                    ).value = email;
+
+                }, 800);
+
+            } catch (error) {
+
+                showMessage(
+                    error.message,
+                    "error"
+                );
+
+            }
+
+        });
+
+</script>
+
+</body>
+</html>
